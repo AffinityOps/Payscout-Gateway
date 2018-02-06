@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * AffinityOps
+ *
+ * @author      AffinityOps Developers & Contributors
+ * @copyright   Copyright (c) 2018 AffinityOps.com
+ * @license     https://affinityops.com/license.txt
+ * @link        https://affinityops.com
+ */
+
 class payscout 
 {
 
@@ -145,7 +154,6 @@ class payscout
 	* Sale With Token
 	**/
 	public function saleToken($token, $amount, $customer_reference) {
-		// Use payment method id 3715
 		// Build arrayData
 		$arrayData = array(
 			"client_username"	=> $this->login['client_username'],
