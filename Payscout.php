@@ -269,6 +269,44 @@ class payscout
 	}
 
 	/**
+	* Process Void https://developer.payscout.com/three_column_template#void-example
+	**/
+	public function void($transaction_id)
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"	=> $this->login['client_username'],
+		    "client_password"	=> $this->login['client_password'],
+		    "client_token"		=> $this->login['client_token'],
+		    "action"			=> 'VOID',
+
+		    "original_transaction_id"	=> $transaction_id
+		);
+
+		return $this->_Post($arrayData);
+	}
+
+	/**
+	* Process Refund https://developer.payscout.com/three_column_template#refund-example
+	**/
+	public function refund($transaction_id, $amount)
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"	=> $this->login['client_username'],
+		    "client_password"	=> $this->login['client_password'],
+		    "client_token"		=> $this->login['client_token'],
+		    "action"			=> 'REFUND',
+		    
+		    "initial_amount"	=> $amount,
+		    "currency"			=> 'USD',
+		    "original_transaction_id"	=> $transaction_id
+		);
+
+		return $this->_Post($arrayData);
+	}
+
+	/**
 	* Create Token
 	**/
 	public function addToken($account_number, $expiration_month, $expiration_year, $customer_reference) {
