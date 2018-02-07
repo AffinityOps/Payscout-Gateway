@@ -1,6 +1,6 @@
 # Payscout-Gateway Class
 
-Integration into Payscout Gateway
+PHP Class for Payscout API
 
 Request Sandbox: https://developer.payscout.com/sandbox
 
