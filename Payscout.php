@@ -5,8 +5,7 @@
  *
  * @author      AffinityOps Developers & Contributors
  * @copyright   Copyright (c) 2018 AffinityOps.com
- * @license     https://affinityops.com/license.txt
- * @link        https://affinityops.com
+ * @link        http://affinityops.com
  */
 
 class payscout 
@@ -48,24 +47,124 @@ class payscout
 
 	}
 
+	/**
+	* Set Billing Information
+	**/
 	public function setBilling(
 		$first_name,
 		$last_name,
-		$email_address,
 		$address_line_1,
+		$address_line_2,
 		$city,
+		$state,
 		$postal_code,
 		$country,
+		$email_address,
 		$phone_number
 			){
-		$this->billing['first_name']		= $first_name;
-	    $this->billing['last_name']			= $last_name;
-	    $this->billing['email_address']		= $email_address;
-	    $this->billing['address_line_1']	= $address_line_1;
-	    $this->billing['city']				= $city;
-	    $this->billing['postal_code']       = $postal_code;
-	    $this->billing['country']   		= $country;
-	    $this->billing['phone_number']		= $phone_number;
+		$this->billing['first_name']				= (strlen($first_name) > 64) ? substr($first_name, 0, 64) : $first_name;
+	    $this->billing['last_name']					= (strlen($last_name) > 64) ? substr($last_name, 0, 64) : $last_name;
+	    $this->billing['phone_number']				= (strlen($phone_number) > 32) ? substr($phone_number, 0, 32) : $phone_number;
+	    $this->billing['address_line_1']			= (strlen($address_line_1) > 64) ? substr($address_line_1, 0, 64) : $address_line_1;
+	    $this->billing['address_line_2']			= (strlen($address_line_2) > 64) ? substr($address_line_2, 0, 64) : $address_line_2;
+	    $this->billing['city']						= (strlen($city) > 64) ? substr($city, 0, 64) : $city;
+	    $this->billing['state']						= (strlen($state) > 2) ? substr($state, 0, 2) : $state;
+	    $this->billing['postal_code']       		= (strlen($postal_code) > 16) ? substr($postal_code, 0, 16) : $postal_code;
+	    $this->billing['country']   				= (strlen($country) > 3) ? substr($country, 0, 3) : $country;
+	    $this->billing['email_address']				= (strlen($email_address) > 256) ? substr($email_address, 0, 256) : $email_address;
+	}
+
+	/**
+	* Set Shipping Information
+	**/
+	public function setShipping(
+		$s_first_name,
+		$s_last_name,
+		$s_email_address,
+		$s_cell_phone_number,
+		$s_phone_number,
+		$s_address_line_1,
+		$s_address_line_2,
+		$s_city,
+		$s_state,
+		$s_postal_code,
+		$s_country
+			){
+		$this->shipping['first_name']				= $s_first_name;
+	    $this->shipping['last_name']				= $s_last_name;
+	    $this->shipping['email_address']			= $s_email_address;
+	    $this->shipping['cell_phone_number']		= $s_cell_phone_number;
+	    $this->shipping['phone_number']				= $s_phone_number;
+	    $this->shipping['address_line_1']			= $s_address_line_1;
+	    $this->shipping['address_line_2']			= $s_address_line_2;
+	    $this->shipping['city']						= $s_city;
+	    $this->shipping['state']					= $s_state;
+	    $this->shipping['postal_code']       		= $s_postal_code;
+	    $this->shipping['country']   				= $s_country;
+	}                       
+
+	/**
+	* Set IP Address
+	**/
+	public function setIP($ip_address)
+	{
+		$this->ip['ip_address'] = $ip_address;
+	}
+
+	/**
+	* Set level 2
+	**/
+	public function setLevel2($invoiceNumber)
+	{
+		$this->level2['invoice_number'] = $invoiceNumber;
+	}
+
+	/**
+	* Process Sale https://developer.payscout.com/three_column_template#sale-example
+	**/
+	public function sale($account_number, $expiration_month, $expiration_year, $amount, $cvv2='')
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"			=> $this->login['client_username'],
+		    "client_password"			=> $this->login['client_password'],
+		    "client_token"				=> $this->login['client_token'],
+		    "action"					=> 'SALE',
+		    // build billing query
+		    "billing_first_name"		=> $this->billing['first_name'],
+		    "billing_last_name"			=> $this->billing['last_name'],
+		    "billing_address_line_1"	=> $this->billing['address_line_1'],
+		    "billing_address_line_2"	=> $this->billing['address_line_2'],
+		    "billing_city"				=> $this->billing['city'],
+		    "billing_state"				=> $this->billing['state'],
+		    "billing_postal_code"		=> $this->billing['postal_code'],
+		    "billing_country"			=> $this->billing['country'],
+		    "billing_phone_number"		=> $this->billing['phone_number'],
+		    "billing_email_address"		=> $this->billing['email_address'],
+		    
+		    "account_number"		=> $account_number,
+		    "expiration_month"		=> $expiration_month,
+		    "expiration_year"		=> $expiration_year,
+		    
+		    "initial_amount"	=> $amount,
+		    "currency"			=> 'USD'
+		);
+
+		if(!empty($cvv2)) { $arrayData['cvv2']	= $cvv2; }
+
+		$arrayData['shipping_first_name']			= (!empty($this->shipping['first_name'])) ? $this->shipping['first_name'] : '';
+		$arrayData['shipping_last_name']			= (!empty($this->shipping['last_name'])) ? $this->shipping['last_name'] : '';
+		$arrayData['shipping_email_address']		= (!empty($this->shipping['email_address'])) ? $this->shipping['email_address'] : '';
+		$arrayData['shipping_cell_phone_number']	= (!empty($this->shipping['cell_phone_number'])) ? $this->shipping['cell_phone_number'] : '';
+		$arrayData['shipping_phone_number']			= (!empty($this->shipping['phone_number'])) ? $this->shipping['phone_number'] : '';
+		$arrayData['shipping_address_line_1']		= (!empty($this->shipping['address_line_1'])) ? $this->shipping['address_line_1'] : '';
+		$arrayData['shipping_address_line_2']		= (!empty($this->shipping['address_line_2'])) ? $this->shipping['address_line_2'] : '';
+		$arrayData['shipping_city']					= (!empty($this->shipping['city'])) ? $this->shipping['city'] : '';
+		$arrayData['shipping_state']				= (!empty($this->shipping['state'])) ? $this->shipping['state'] : '';
+		$arrayData['shipping_postal_code']			= (!empty($this->shipping['postal_code'])) ? $this->shipping['postal_code'] : '';
+		$arrayData['shipping_country']				= (!empty($this->shipping['country'])) ? $this->shipping['country'] : '';
+    	
+    	return $this->_Post($arrayData);
 	}
 
 	/**
@@ -154,6 +253,7 @@ class payscout
 	* Sale With Token
 	**/
 	public function saleToken($token, $amount, $customer_reference) {
+		// Use payment method id 3715
 		// Build arrayData
 		$arrayData = array(
 			"client_username"	=> $this->login['client_username'],
