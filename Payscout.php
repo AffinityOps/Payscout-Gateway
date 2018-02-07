@@ -1,11 +1,10 @@
 <?php
 
-/*
- * AffinityOps
+/**
+ * Payscout Gateway
  *
- * @author      AffinityOps Developers & Contributors
- * @copyright   Copyright (c) 2018 AffinityOps.com
- * @link        http://affinityops.com
+ * @link https://developer.payscout.com/three_column_template#getting-started
+ * Also see our blog http://www.affinityops.com
  */
 
 class payscout 
