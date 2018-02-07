@@ -150,6 +150,8 @@ class payscout
 		    "currency"			=> 'USD'
 		);
 
+		$arrayData['ip_address'] = (!empty($ip['ip_address'])) ? $ip['ip_address'] : '';
+
 		if(!empty($cvv2)) { $arrayData['cvv2']	= $cvv2; }
 
 		$arrayData['shipping_first_name']			= (!empty($this->shipping['first_name'])) ? $this->shipping['first_name'] : '';
@@ -163,8 +165,107 @@ class payscout
 		$arrayData['shipping_state']				= (!empty($this->shipping['state'])) ? $this->shipping['state'] : '';
 		$arrayData['shipping_postal_code']			= (!empty($this->shipping['postal_code'])) ? $this->shipping['postal_code'] : '';
 		$arrayData['shipping_country']				= (!empty($this->shipping['country'])) ? $this->shipping['country'] : '';
+		
+		$arrayData['billing_invoice_number'] = (!empty($this->level2['invoice_number'])) ? $this->level2['invoice_number'] : '';
     	
     	return $this->_Post($arrayData);
+	}
+
+	/**
+	* Process Auth https://developer.payscout.com/three_column_template#auth-example
+	**/
+	public function auth($account_number, $expiration_month, $expiration_year, $amount, $cvv2='')
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"			=> $this->login['client_username'],
+		    "client_password"			=> $this->login['client_password'],
+		    "client_token"				=> $this->login['client_token'],
+		    "action"					=> 'PRE_AUTHORIZATION',
+		    // build billing query
+		    "billing_first_name"		=> $this->billing['first_name'],
+		    "billing_last_name"			=> $this->billing['last_name'],
+		    "billing_address_line_1"	=> $this->billing['address_line_1'],
+		    "billing_address_line_2"	=> $this->billing['address_line_2'],
+		    "billing_city"				=> $this->billing['city'],
+		    "billing_state"				=> $this->billing['state'],
+		    "billing_postal_code"		=> $this->billing['postal_code'],
+		    "billing_country"			=> $this->billing['country'],
+		    "billing_phone_number"		=> $this->billing['phone_number'],
+		    "billing_email_address"		=> $this->billing['email_address'],
+		    
+		    "account_number"		=> $account_number,
+		    "expiration_month"		=> $expiration_month,
+		    "expiration_year"		=> $expiration_year,
+		    
+		    "initial_amount"	=> $amount,
+		    "currency"			=> 'USD'
+		);
+
+		$arrayData['ip_address'] = (!empty($ip['ip_address'])) ? $ip['ip_address'] : '';
+
+		if(!empty($cvv2)) { $arrayData['cvv2']	= $cvv2; }
+
+		$arrayData['shipping_first_name']			= (!empty($this->shipping['first_name'])) ? $this->shipping['first_name'] : '';
+		$arrayData['shipping_last_name']			= (!empty($this->shipping['last_name'])) ? $this->shipping['last_name'] : '';
+		$arrayData['shipping_email_address']		= (!empty($this->shipping['email_address'])) ? $this->shipping['email_address'] : '';
+		$arrayData['shipping_cell_phone_number']	= (!empty($this->shipping['cell_phone_number'])) ? $this->shipping['cell_phone_number'] : '';
+		$arrayData['shipping_phone_number']			= (!empty($this->shipping['phone_number'])) ? $this->shipping['phone_number'] : '';
+		$arrayData['shipping_address_line_1']		= (!empty($this->shipping['address_line_1'])) ? $this->shipping['address_line_1'] : '';
+		$arrayData['shipping_address_line_2']		= (!empty($this->shipping['address_line_2'])) ? $this->shipping['address_line_2'] : '';
+		$arrayData['shipping_city']					= (!empty($this->shipping['city'])) ? $this->shipping['city'] : '';
+		$arrayData['shipping_state']				= (!empty($this->shipping['state'])) ? $this->shipping['state'] : '';
+		$arrayData['shipping_postal_code']			= (!empty($this->shipping['postal_code'])) ? $this->shipping['postal_code'] : '';
+		$arrayData['shipping_country']				= (!empty($this->shipping['country'])) ? $this->shipping['country'] : '';
+		
+		$arrayData['billing_invoice_number'] = (!empty($this->level2['invoice_number'])) ? $this->level2['invoice_number'] : '';
+    	
+    	return $this->_Post($arrayData);
+	}
+
+	/**
+	* Process Credit https://developer.payscout.com/three_column_template#credit-example
+	**/
+	public function credit($account_number, $expiration_month, $expiration_year, $amount, $cvv2='')
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"			=> $this->login['client_username'],
+		    "client_password"			=> $this->login['client_password'],
+		    "client_token"				=> $this->login['client_token'],
+		    "action"					=> 'CREDIT',
+		    
+		    "account_number"		=> $account_number,
+		    "expiration_month"		=> $expiration_month,
+		    "expiration_year"		=> $expiration_year,
+		    
+		    "initial_amount"	=> $amount,
+		    "currency"			=> 'USD'
+		);
+
+		if(!empty($cvv2)) { $arrayData['cvv2']	= $cvv2; }
+    	
+    	return $this->_Post($arrayData);
+	}
+
+	/**
+	* Process Capture https://developer.payscout.com/three_column_template#capture-example
+	**/
+	public function capture($transaction_id, $amount)
+	{
+		// Build arrayData
+		$arrayData = array(
+			"client_username"	=> $this->login['client_username'],
+		    "client_password"	=> $this->login['client_password'],
+		    "client_token"		=> $this->login['client_token'],
+		    "action"			=> 'CAPTURE',
+		    
+		    "initial_amount"	=> $amount,
+		    "currency"			=> 'USD',
+		    "original_transaction_id"	=> $transaction_id
+		);
+
+		return $this->_Post($arrayData);
 	}
 
 	/**
