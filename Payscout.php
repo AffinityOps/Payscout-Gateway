@@ -4,7 +4,6 @@
  * Payscout Gateway
  *
  * @link https://developer.payscout.com/three_column_template#getting-started
- * Also see our blog http://www.affinityops.com
  */
 
 class payscout 
